@@ -1,30 +1,37 @@
 package ictech.u2_w2_d3_spring_web_2.entities;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDate;
-import java.util.Random;
+import java.util.UUID;
 
+@Entity
+@Table(name = "authors")
 @Getter
 @Setter
+@NoArgsConstructor
+@ToString
 public class Author {
     @Setter(AccessLevel.NONE)
-    private int id;
+    @Id
+    @GeneratedValue
+    private UUID id;
+    @Column(nullable = false)
     private String name;
+    @Column(nullable = false)
     private String surname;
+    @Column(nullable = false, unique = true)
     private String email;
+    @Column(name = "date_of_birth", nullable = false)
     private LocalDate birthDate;
+    @Column(nullable = false)
     private String avatar;
 
-    public Author(String name, String surname, String email, LocalDate birthDate, String avatar) {
-        Random rndm = new Random();
-        this.id = rndm.nextInt(1, 10000);
+    public Author(String name, String surname, String email, LocalDate birthDate) {
         this.name = name;
         this.surname = surname;
         this.email = email;
         this.birthDate = birthDate;
-        this.avatar = avatar;
     }
 }

@@ -1,32 +1,43 @@
 package ictech.u2_w2_d3_spring_web_2.entities;
 
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import jakarta.persistence.*;
+import lombok.*;
 
-import java.util.Random;
+import java.util.UUID;
 
+@Entity
+@Table(name = "blog_posts")
 @Getter
 @Setter
+@NoArgsConstructor
 @ToString
 public class BlogPost {
     @Setter(AccessLevel.NONE)
-    private int id;
+    @Id
+    @GeneratedValue
+    private UUID id;
+    @Column(nullable = false)
     private String genre;
+    @Column(nullable = false)
     private String title;
+    @Column(nullable = false)
     private String cover;
+    @Column(nullable = false)
     private String content;
+    @Column(name = "reading_time", nullable = false)
     private int readingTime;
 
-    public BlogPost(String genre, String title, String cover, String content, int readingTime) {
-        Random rndm = new Random();
-        this.id = rndm.nextInt(1, 10000);
+    @ManyToOne
+    @JoinColumn(name = "author_id", nullable = false)
+    private Author author;
+
+    public BlogPost(String genre, String title, String cover, String content, int readingTime, Author author) {
         this.genre = genre;
         this.title = title;
         this.cover = cover;
         this.content = content;
         this.readingTime = readingTime;
+        this.author = author;
     }
 }

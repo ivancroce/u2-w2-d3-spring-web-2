@@ -1,40 +1,77 @@
 package ictech.u2_w2_d3_spring_web_2.services;
 
-import ictech.u2_w2_d2_spring_web.entities.Author;
-import ictech.u2_w2_d2_spring_web.exceptions.NotFoundException;
-import ictech.u2_w2_d2_spring_web.payloads.NewAuthorPayload;
+import ictech.u2_w2_d3_spring_web_2.entities.Author;
+import ictech.u2_w2_d3_spring_web_2.exceptions.BadRequestException;
+import ictech.u2_w2_d3_spring_web_2.exceptions.NotFoundException;
+import ictech.u2_w2_d3_spring_web_2.payloads.NewAuthorPayload;
+import ictech.u2_w2_d3_spring_web_2.repositories.AuthorRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Slf4j
 public class AuthorsService {
-    private List<Author> authorsDB = new ArrayList<>();
+
+    @Autowired
+    AuthorRepository authorRepository;
+
+    public Author saveAuthor(NewAuthorPayload payload) {
+        // Verify if the email is already in use
+        this.authorRepository.findByEmail(payload.getEmail()).ifPresent(author -> {
+            throw new BadRequestException("The email '" + payload.getEmail() + "' is already in use.");
+        });
+
+        // Add server-generated values
+        Author newAuthor = new Author(payload.getName(), payload.getSurname(), payload.getEmail(), payload.getBirthDate());
+        newAuthor.setAvatar("https://ui-avatars.com/api/?name=" + payload.getName() + "+" + payload.getSurname());
+
+        Author savedAuthor = this.authorRepository.save(newAuthor);
+
+        log.info("The Author with ID '" + savedAuthor.getId() + "' was created.");
+        return savedAuthor;
+    }
 
     public List<Author> findAll() {
-        return this.authorsDB;
+        return this.authorRepository.findAll();
     }
 
-    public Author saveAuthors(NewAuthorPayload payload) {
-        Author newAuthor = new Author(payload.getName(), payload.getSurname(), payload.getEmail(), payload.getBirthDate(), "https://ui-avatars.com/api/?name=Mario+Rossi");
-        this.authorsDB.add(newAuthor);
-        log.info("The author with email '" + payload.getEmail() + "' was created.");
-        return newAuthor;
+    public Author findById(UUID authorId) {
+        return this.authorRepository.findById(authorId).orElseThrow(() -> new NotFoundException(authorId));
     }
 
-    public Author findById(int authorId) {
-        Author found = null;
-        for (Author author : this.authorsDB) {
-            if (author.getId() == authorId) found = author;
-        }
+    public Author findByIdAndUpdate(UUID authorId, NewAuthorPayload payload) {
+        // find the author in the DB
+        Author found = this.findById(authorId);
 
-        if (found == null) throw new NotFoundException(authorId);
-        return found;
+        // if the email doesn't exist
+        if (!found.getEmail().equals(payload.getEmail()))
+            this.authorRepository.findByEmail(payload.getEmail()).ifPresent(author -> {
+                throw new BadRequestException("The email '" + author.getEmail() + "' is already in use.");
+            });
+
+        found.setName(payload.getName());
+        found.setSurname(payload.getSurname());
+        found.setEmail(payload.getEmail());
+        found.setBirthDate(payload.getBirthDate());
+        found.setAvatar("https://ui-avatars.com/api/?name=" + payload.getName() + "+" + payload.getSurname());
+
+        Author updatedAuthor = this.authorRepository.save(found);
+
+        log.info("The Author with ID '" + updatedAuthor.getId() + "' was updated.");
+
+        return updatedAuthor;
     }
 
+    public void findByIdAndDelete(UUID authorId) {
+        Author found = this.findById(authorId);
+        this.authorRepository.delete(found);
+    }
+
+    /*
     public Author findByIdAndUpdate(int authorId, NewAuthorPayload payload) {
         Author found = null;
         for (Author author : this.authorsDB) {
@@ -60,5 +97,5 @@ public class AuthorsService {
 
         if (found == null) throw new NotFoundException(authorId);
         this.authorsDB.remove(found);
-    }
+    } */
 }

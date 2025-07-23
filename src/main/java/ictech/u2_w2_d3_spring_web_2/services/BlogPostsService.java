@@ -1,3 +1,4 @@
+/*
 package ictech.u2_w2_d3_spring_web_2.services;
 
 import ictech.u2_w2_d2_spring_web.entities.BlogPost;
@@ -61,3 +62,4 @@ public class BlogPostsService {
         this.blogPostsDB.remove(found);
     }
 }
+*/

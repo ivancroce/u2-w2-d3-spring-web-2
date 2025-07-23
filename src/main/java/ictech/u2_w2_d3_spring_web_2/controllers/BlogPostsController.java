@@ -1,3 +1,4 @@
+/*
 package ictech.u2_w2_d3_spring_web_2.controllers;
 
 import ictech.u2_w2_d2_spring_web.entities.BlogPost;
@@ -49,3 +50,4 @@ public class BlogPostsController {
     }
 }
 
+*/
