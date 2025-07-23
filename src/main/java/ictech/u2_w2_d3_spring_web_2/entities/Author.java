@@ -1,9 +1,11 @@
 package ictech.u2_w2_d3_spring_web_2.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -27,6 +29,10 @@ public class Author {
     private LocalDate birthDate;
     @Column(nullable = false)
     private String avatar;
+
+    @OneToMany(mappedBy = "author")
+    @JsonIgnore // to avoid infinite loop
+    private List<BlogPost> blogPosts;
 
     public Author(String name, String surname, String email, LocalDate birthDate) {
         this.name = name;
