@@ -4,10 +4,10 @@ import ictech.u2_w2_d3_spring_web_2.entities.BlogPost;
 import ictech.u2_w2_d3_spring_web_2.payloads.NewBlogPostPayload;
 import ictech.u2_w2_d3_spring_web_2.services.BlogPostsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -19,8 +19,12 @@ public class BlogPostsController {
 
     // 1. GET http://localhost:3001/blogPosts
     @GetMapping
-    public List<BlogPost> getBlogPosts() {
-        return this.blogPostsService.findAll();
+    public Page<BlogPost> getBlogPosts(@RequestParam(defaultValue = "0") int page,
+                                       @RequestParam(defaultValue = "10") int size,
+                                       @RequestParam(defaultValue = "id") String sortBy
+
+    ) {
+        return this.blogPostsService.findAll(page, size, sortBy);
     }
 
     // 2. POST http://localhost:3001/blogPosts (+ payload)
