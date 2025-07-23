@@ -41,8 +41,8 @@ public class AuthorsController {
 
     // 4. PUT http://localhost:3001/authors/{authorId} (+ payload)
     @PutMapping("/{authorId}")
-    public Author findAuthorByIdAndUpdate(@PathVariable UUID authorId, @RequestBody NewAuthorPayload body) {
-        return this.authorsService.findByIdAndUpdate(authorId, body);
+    public Author findAuthorByIdAndUpdate(@PathVariable UUID authorId, @RequestBody NewAuthorPayload payload) {
+        return this.authorsService.findByIdAndUpdate(authorId, payload);
     }
 
     // 5. DELETE http://localhost:3001/authors/{blogPostId}
